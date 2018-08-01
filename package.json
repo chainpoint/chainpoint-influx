@@ -1,0 +1,21 @@
+{
+  "name": "influx-shadowed",
+  "version": "1.0.0",
+  "description": "A wrapper around the officially supported influx package that supports batching along with the ability to supress captured events if you would like to enable/disable writing to influx at any given time without making significant code changes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "influx",
+    "influxdb",
+    "monitoring",
+    "logging",
+    "tick"
+  ],
+  "author": "Michael Iglesias <miglesias@tierion.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "influx": "^5.0.7"
+  }
+}
