@@ -62,4 +62,13 @@ describe('Chainpoint InfluxDB', function () {
       done()
     })
   })
+
+  it('Write another 5 Points and make sure that a XHR call is made to write aggregated 10 points to InfluxDB', function (done) {
+    nock('http://127.0.0.1:8186').post(() => true) .reply(200, {});
+
+    eventTracker.writePoints([{}, {}, {}, {}, {}]).then(() => {
+      expect(eventTracker.eventQueue).to.have.lengthOf(0)
+      done()
+    })
+  })
 })
