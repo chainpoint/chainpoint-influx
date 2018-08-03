@@ -13,6 +13,7 @@
 const { InfluxDB } = require('influx')
 
 const INFLUXDB_DEFAULT_BATCH_SIZE = 1000
+const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (60 * 1000) // 1min
 
 /**
  * ShadowedInflux - A wrapper around the officially supported 'influx' package. This has been developed and re-packaged to address
@@ -32,8 +33,11 @@ function ShadowedInflux (initOptions, config = {}) {
 
   this.influxEnabled = config.enabled || true
   this.batching = config.batching || false
+  this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
+
+  if (this.influxEnabled && this.batching) setInterval(this.flushEventQueue, this.flushingInterval)
 }
 
 ShadowedInflux.prototype = Object.create(InfluxDB.prototype)
@@ -53,12 +57,18 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 
   let events = (this.batching && (this.eventQueue.length >= this.eventQueueBatchSize)) ? this.eventQueue.splice(0, this.eventQueueBatchSize) : points
 
+  console.log('InfluxDB : PROCESSING : Writing points...')
+
   InfluxDB.prototype.writePoints.call(this, events, opts).then(
     (res) => { return res },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)
       console.error(`InfluxDB : ERROR : Issues persiting captured application events : ${err.message}`)
     })
+}
+
+ShadowedInflux.prototype.flushEventQueue = function () {
+  this.writePoints()
 }
 
 module.exports = ShadowedInflux
