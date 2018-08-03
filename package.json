@@ -1,5 +1,5 @@
 {
-  "name": "influx-shadowed",
+  "name": "chainpoint-influx",
   "version": "1.0.0",
   "description": "A wrapper around the officially supported influx package that supports batching along with the ability to supress captured events if you would like to enable/disable writing to influx at any given time without making significant code changes.",
   "main": "index.js",

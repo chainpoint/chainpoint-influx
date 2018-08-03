@@ -62,3 +62,4 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 }
 
 module.exports = ShadowedInflux
+module.exports.InfluxDB = ShadowedInflux
