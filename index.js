@@ -56,9 +56,11 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
   if (this.batching) {
     this.eventQueue = this.eventQueue.concat(
       points.map(currVal => {
-        return Object.assign({}, currVal, {
-          timestamp: new Date()
-        })
+        if (!currVal.timestamp) {
+          currVal.timestamp = new Date()
+        }
+
+        return currVal
       })
     )
 
