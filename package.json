@@ -16,12 +16,13 @@
   "author": "Michael Iglesias <miglesias@tierion.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "influx": "^5.0.7",
-    "nock": "^9.4.4"
+    "influx": "^5.0.7"
+    
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
+    "nock": "^9.4.4",
     "sinon": "^6.1.4"
   }
 }

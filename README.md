@@ -14,7 +14,36 @@ For Node, simply:
 
 ## Usage
 
-...
+```
+const { InfluxDB } = require('chainpoint-influx')
+```
+
+To instantiate an Influx object, make the same constructor as you would with the officially supported `influx` package and pass an additional `config` object which is optional and whose object signature can be seen in the code snippet below.
+
+```
+const influx = new InfluxDB(<IClusterConfig|ISingleHostConfig|string>, {
+    enabled: true,
+    batching: true,
+    batchSize: 10,
+    flushingInterval: 15 * 1000 // 15secs
+})
+```
+
+|   Properties   |                                                                                                           Description                                                                                                          | Required | Type   |
+|:--------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------:|--------|
+|      Connection Options     |                                                   Connect to a single InfluxDB instance by specifying a set of connection options..                                                  |    yes   | `IClusterConfig|ISingleHostConfig|string` |
+| Config Options     | `{ enabled?: boolean, batching?: boolean, batchSize?: Number, flushingInterval?: Number }`                                                                                         | no       | object    |
+
+
+
+## How this package differs from `influx`
+
+NOTE: This package only introduces two mutation points towards the original `influx` package which are as follows:
+> 1. This package overrides the method: `writePoints()`
+> 2. This package introduces a new method `flushEventQueue()` which is only invoked when `batching` has been enabled
+
+Also, flushing the event queue is something that cannot be overwritten, if `batching` has been enabled, the event queue will always be flushed at the specified (or default of 10 seconds) interval.
+
 
 ## License
 
