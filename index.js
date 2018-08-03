@@ -87,6 +87,8 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
  * @returns Promise
 */
 ShadowedInflux.prototype.flushEventQueue = function () {
+  if (!this.eventQueue.length) return Promise.resolve()
+
   const events = this.eventQueue.splice(0)
 
   return InfluxDB.prototype.writePoints.call(this, events).then(
