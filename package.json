@@ -16,7 +16,8 @@
   "author": "Michael Iglesias <miglesias@tierion.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "influx": "^5.0.7"
+    "influx": "^5.0.7",
+    "nock": "^9.4.4"
   },
   "devDependencies": {
     "chai": "^4.1.2",

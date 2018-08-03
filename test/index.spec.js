@@ -16,6 +16,7 @@
 const expect = require('chai').expect
 const assert = require('assert')
 const sinon = require('sinon')
+const nock = require('nock')
 const { InfluxDB } = require('../index')
 
 let eventTracker
@@ -23,7 +24,8 @@ let clock
 
 describe('Chainpoint InfluxDB', function () {
   before(() => {
-    clock = sinon.useFakeTimers();
+    clock = sinon.useFakeTimers()
+
     eventTracker = new InfluxDB('http://127.0.0.1:8186/chainpoint', {
       enabled: true,
       batching: true,
@@ -33,7 +35,7 @@ describe('Chainpoint InfluxDB', function () {
   })
 
   after(() => {
-    clock.restore();
+    clock.restore()
   })
 
 
@@ -47,10 +49,10 @@ describe('Chainpoint InfluxDB', function () {
     }))
 
     clock.tick(14 * 1000);
-    assert(eventTracker.writePoints.notCalled);
+    assert(eventTracker.writePoints.notCalled)
 
     clock.tick(1 * 1000);
-    assert(eventTracker.writePoints.calledOnce);
+    assert(eventTracker.writePoints.calledOnce)
     done()
   })
 

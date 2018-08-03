@@ -70,22 +70,26 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 
   console.log('InfluxDB : PROCESSING : Writing points...')
 
-  InfluxDB.prototype.writePoints.call(this, events, opts).then(
+  return InfluxDB.prototype.writePoints.call(this, events, opts).then(
     (res) => { return res },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)
       console.error(`InfluxDB : ERROR : Issues persisting captured application events : ${err.message}`)
+
+      return Promise.reject(err)
     })
 }
 
 ShadowedInflux.prototype.flushEventQueue = function () {
   const events = this.eventQueue.splice(0)
 
-  InfluxDB.prototype.writePoints.call(this, events).then(
+  return InfluxDB.prototype.writePoints.call(this, events).then(
     (res) => { return res },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)
       console.error(`InfluxDB : ERROR : Issues persisting captured application events : ${err.message}`)
+
+      return Promise.reject(err)
     })
 }
 
