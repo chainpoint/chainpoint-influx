@@ -32,7 +32,7 @@ const influx = new InfluxDB(<IClusterConfig|ISingleHostConfig|string>, {
 |   Properties   |                                                                                                           Description                                                                                                          | Required | Type   |
 |:--------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------:|--------|
 |      Connection Options     |                                                   Connect to a single InfluxDB instance by specifying a set of connection options..                                                  |    yes   | `IClusterConfig|ISingleHostConfig|string` |
-| Config Options     | `{ enabled?: boolean, batching?: boolean, batchSize?: Number, flushingInterval?: Number }`                                                                                         | no       | object    |
+| Config     | `{ enabled?: boolean, batching?: boolean, batchSize?: Number, flushingInterval?: Number }`                                                                                         | no       | object    |
 
 
 

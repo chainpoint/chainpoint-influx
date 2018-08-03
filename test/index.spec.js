@@ -38,7 +38,6 @@ describe('Chainpoint InfluxDB', function () {
     clock.restore()
   })
 
-
   // Testing Batching
   it('Flushing Event Queue should occur at the specified interval (15 seconds for this test) ', function (done) {
     let eventTracker = sinon.stub(new InfluxDB('http://127.0.0.1:8186/chainpoint', {
