@@ -26,7 +26,7 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
  * @param {IClusterConfig|ISingleHostConfig|string} initOptions
  * @param {{ enabled?: boolean, batching?: boolean, batchSize?: Number, flushingInterval?: Number }} config - Object that accepts enabled, batching properties which are both Booleans. 'enabled' defaults to true & 'batching' defaults to false, batchSize defaults to 1000, flushingInterval defaults to (10 * 1000)
  *
- * @returns void
+ * @returns Promise
  */
 function ShadowedInflux (initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
@@ -80,6 +80,12 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
     })
 }
 
+/**
+ * flushEventQueue - This method is invoked at a set interval and will flush the event queue and submit all previously
+ *                   captured points to InfluxDB.
+ *
+ * @returns Promise
+*/
 ShadowedInflux.prototype.flushEventQueue = function () {
   const events = this.eventQueue.splice(0)
 
