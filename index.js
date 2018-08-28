@@ -31,8 +31,8 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
 function ShadowedInflux (initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
 
-  this.influxEnabled = config.enabled || true
-  this.batching = config.batching || false
+  this.influxEnabled = (config.enabled === 'yes')
+  this.batching = (config.batching === 'yes')
   this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
