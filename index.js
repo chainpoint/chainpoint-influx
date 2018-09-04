@@ -39,8 +39,6 @@ function ShadowedInflux (initOptions, config = {}) {
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
 
-  this.writePointsHttp()
-
   // Automatically flush eventQueue if batching is enabled at the specified flushingInterval
   if (this.influxEnabled && this.batching) {
     setInterval(() => {
@@ -60,8 +58,6 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
     body: objectToLineProtocol(points),
     json: true
   }
-
-  console.log('InfluxDB : HTTP Writing Points : ' + JSON.stringify(httpOptions))
 
   return rp(httpOptions)
 }
