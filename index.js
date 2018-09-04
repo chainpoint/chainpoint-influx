@@ -66,7 +66,7 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
 
   const options = {
     method: 'POST',
-    url: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}`,
+    url: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}&precision=s`,
     body: objectToLineProtocol(points)
   }
 
