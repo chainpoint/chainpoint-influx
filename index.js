@@ -11,6 +11,8 @@
  * limitations under the License.
 */
 const { InfluxDB } = require('influx')
+const rp = require('request-promise-native')
+const objectToLineProtocol = require('./lib/objectToLineProtocol')
 
 const INFLUXDB_DEFAULT_BATCH_SIZE = 1000
 const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
@@ -31,8 +33,8 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
 function ShadowedInflux (initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
 
-  this.influxEnabled = (config.enabled === 'yes')
-  this.batching = (config.batching === 'yes')
+  this.influxEnabled = !!(config.enabled === 'yes')
+  this.batching = !!(config.batching === 'yes')
   this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
@@ -47,6 +49,17 @@ function ShadowedInflux (initOptions, config = {}) {
 
 ShadowedInflux.prototype = Object.create(InfluxDB.prototype)
 ShadowedInflux.prototype.constructor = ShadowedInflux
+
+ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
+  const host = this.options.hosts[0]
+  const httpOptions = {
+    method: 'POST',
+    uri: `${host.protocol}://${this.options.username}@${this.options.password}:${host.host}:${host.port}/write?db=${this.options.database}`,
+    body: objectToLineProtocol(points),
+    json: true
+  }
+  return rp(httpOptions)
+}
 
 ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
   // Short-circuit and do not submit captured events if influxEnabled is set to false
@@ -72,7 +85,7 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 
   console.log('InfluxDB : PROCESSING : Writing points...')
 
-  return InfluxDB.prototype.writePoints.call(this, events, opts).then(
+  return this.writePointsHttp(events, opts).then(
     (res) => { return res },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)
@@ -93,7 +106,7 @@ ShadowedInflux.prototype.flushEventQueue = function () {
 
   const events = this.eventQueue.splice(0)
 
-  return InfluxDB.prototype.writePoints.call(this, events).then(
+  return this.writePointsHttp(events).then(
     (res) => { return res },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)

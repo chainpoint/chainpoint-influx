@@ -16,8 +16,13 @@
   "author": "Michael Iglesias <miglesias@tierion.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "influx": "^5.0.7"
-    
+    "async": "^2.4.1",
+    "async-retry": "^1.1.4",
+    "influx": "^5.0.7",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4"
   },
   "devDependencies": {
     "chai": "^4.1.2",
