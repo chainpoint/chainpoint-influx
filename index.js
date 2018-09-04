@@ -59,6 +59,8 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
     json: true
   }
 
+  console.log('InfluxDB : HTTP Writing Points : ' + JSON.stringify(httpOptions))
+
   return rp(httpOptions)
 }
 
