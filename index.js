@@ -11,7 +11,8 @@
  * limitations under the License.
 */
 const { InfluxDB } = require('influx')
-const rp = require('request-promise-native')
+const request = require('request')
+// const rp = require('request-promise-native')
 const objectToLineProtocol = require('./lib/objectToLineProtocol')
 
 const INFLUXDB_DEFAULT_BATCH_SIZE = 1000
@@ -52,16 +53,29 @@ ShadowedInflux.prototype.constructor = ShadowedInflux
 
 ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
   const host = this.options.hosts[0]
-  const httpOptions = {
+  // const httpOptions = {
+  //   method: 'POST',
+  //   uri: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}`,
+  //   body: objectToLineProtocol(points),
+  //   json: true
+  // }
+
+  // console.log('InfluxDB : HTTP Writing Points : ' + JSON.stringify(httpOptions))
+
+  // return rp(httpOptions)
+
+  const options = {
     method: 'POST',
-    uri: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}`,
-    body: objectToLineProtocol(points),
-    json: true
+    url: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}`,
+    body: objectToLineProtocol(points)
   }
 
-  console.log('InfluxDB : HTTP Writing Points : ' + JSON.stringify(httpOptions))
-
-  return rp(httpOptions)
+  return new Promise((resolve, reject) => {
+    request(options, function (error, response, body) {
+      if (error) reject(error)
+      resolve(body)
+    })
+  })
 }
 
 ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
