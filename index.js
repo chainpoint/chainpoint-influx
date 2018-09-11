@@ -80,7 +80,7 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
 
 ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
   // Short-circuit and do not submit captured events if influxEnabled is set to false
-  if (!this.influxEnabled) return
+  if (!this.influxEnabled) return Promise.resolve()
 
   // If batching is enabled, concat points to eventQueue
   if (this.batching) {
