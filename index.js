@@ -34,8 +34,8 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
 function ShadowedInflux (initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
 
-  this.influxEnabled = !!(config.enabled === 'yes')
-  this.batching = !!(config.batching === 'yes')
+  this.influxEnabled = (config.enabled === 'yes')
+  this.batching = (config.batching === 'yes')
   this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
@@ -53,16 +53,6 @@ ShadowedInflux.prototype.constructor = ShadowedInflux
 
 ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
   const host = this.options.hosts[0]
-  // const httpOptions = {
-  //   method: 'POST',
-  //   uri: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}`,
-  //   body: objectToLineProtocol(points),
-  //   json: true
-  // }
-
-  // console.log('InfluxDB : HTTP Writing Points : ' + JSON.stringify(httpOptions))
-
-  // return rp(httpOptions)
 
   const options = {
     method: 'POST',
