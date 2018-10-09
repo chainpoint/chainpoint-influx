@@ -60,6 +60,8 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
     body: objectToLineProtocol(points)
   }
 
+  console.log('InfluxDB : points : ', JSON.stringify(objectToLineProtocol(points)))
+
   return new Promise((resolve, reject) => {
     request(options, function (error, response, body) {
       if (error) reject(error)
