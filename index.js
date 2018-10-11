@@ -60,10 +60,6 @@ ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
     body: objectToLineProtocol(points)
   }
 
-  console.log('====================================')
-  console.log('body: ', JSON.stringify(objectToLineProtocol(points)))
-  console.log('====================================')
-
   return new Promise((resolve, reject) => {
     request(options, function (error, response, body) {
       if (error) reject(error)
@@ -97,7 +93,11 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
   console.log('InfluxDB : PROCESSING : Writing points...')
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
-    (res) => { return res },
+    (res) => {
+      console.log('InfluxDB : CAPTURED : ', res)
+
+      return res
+    },
     (err) => {
       this.eventQueue = this.eventQueue.concat(events)
       console.error(`InfluxDB : ERROR : Issues persisting captured application events : ${err.message}`)
