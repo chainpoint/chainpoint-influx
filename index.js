@@ -94,7 +94,7 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
     (res) => {
-      console.log('InfluxDB : CAPTURED : ', res)
+      console.log('InfluxDB : CAPTURED : Successfully captured points', res)
 
       return res
     },
