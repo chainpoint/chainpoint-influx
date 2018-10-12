@@ -9,14 +9,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 const { InfluxDB } = require('influx')
 const request = require('request')
 // const rp = require('request-promise-native')
 const objectToLineProtocol = require('./lib/objectToLineProtocol')
 
 const INFLUXDB_DEFAULT_BATCH_SIZE = 1000
-const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
+const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = 10 * 1000 // 10secs
 
 /**
  * ShadowedInflux - A wrapper around the officially supported 'influx' package. This has been developed and re-packaged to address
@@ -31,12 +31,13 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
  *
  * @returns Promise
  */
-function ShadowedInflux (initOptions, config = {}) {
+function ShadowedInflux(initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
 
-  this.influxEnabled = (config.enabled === 'yes')
-  this.batching = (config.batching === 'yes')
-  this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
+  this.influxEnabled = config.enabled === 'yes'
+  this.batching = config.batching === 'yes'
+  this.flushingInterval =
+    config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
 
@@ -51,24 +52,26 @@ function ShadowedInflux (initOptions, config = {}) {
 ShadowedInflux.prototype = Object.create(InfluxDB.prototype)
 ShadowedInflux.prototype.constructor = ShadowedInflux
 
-ShadowedInflux.prototype.writePointsHttp = function (points = [], opts = {}) {
+ShadowedInflux.prototype.writePointsHttp = function(points = [], opts = {}) {
   const host = this.options.hosts[0]
 
   const options = {
     method: 'POST',
-    url: `${host.protocol}://${this.options.username}:${this.options.password}@${host.host}:${host.port}/write?db=${this.options.database}&precision=s`,
+    url: `${host.protocol}://${this.options.username}:${
+      this.options.password
+    }@${host.host}:${host.port}/write?db=${this.options.database}&precision=s`,
     body: objectToLineProtocol(points)
   }
 
   return new Promise((resolve, reject) => {
-    request(options, function (error, response, body) {
+    request(options, function(error, response, body) {
       if (error) reject(error)
       resolve(body)
     })
   })
 }
 
-ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
+ShadowedInflux.prototype.writePoints = function(points = [], opts = {}) {
   // Short-circuit and do not submit captured events if influxEnabled is set to false
   if (!this.influxEnabled) return Promise.resolve()
 
@@ -85,25 +88,34 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
     )
 
     // Short-circuit and simply return a resolved promise if the event queue
-    if (this.eventQueue.length < this.eventQueueBatchSize) return Promise.resolve()
+    if (this.eventQueue.length < this.eventQueueBatchSize)
+      return Promise.resolve()
   }
 
-  let events = (this.batching && (this.eventQueue.length >= this.eventQueueBatchSize)) ? this.eventQueue.splice(0, this.eventQueueBatchSize) : points
+  let events =
+    this.batching && this.eventQueue.length >= this.eventQueueBatchSize
+      ? this.eventQueue.splice(0, this.eventQueueBatchSize)
+      : points
 
   console.log('InfluxDB : PROCESSING : Writing points...')
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
-    (res) => {
+    res => {
       console.log('InfluxDB : CAPTURED : Successfully captured points', res)
 
       return res
     },
-    (err) => {
+    err => {
       this.eventQueue = this.eventQueue.concat(events)
-      console.error(`InfluxDB : ERROR : Issues persisting captured application events : ${err.message}`)
+      console.error(
+        `InfluxDB : ERROR : Issues persisting captured application events : ${
+          err.message
+        }`
+      )
 
       return Promise.reject(err)
-    })
+    }
+  )
 }
 
 /**
@@ -111,20 +123,27 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
  *                   captured points to InfluxDB.
  *
  * @returns Promise
-*/
-ShadowedInflux.prototype.flushEventQueue = function () {
+ */
+ShadowedInflux.prototype.flushEventQueue = function() {
   if (!this.eventQueue.length) return Promise.resolve()
 
   const events = this.eventQueue.splice(0)
 
   return this.writePointsHttp(events).then(
-    (res) => { return res },
-    (err) => {
+    res => {
+      return res
+    },
+    err => {
       this.eventQueue = this.eventQueue.concat(events)
-      console.error(`InfluxDB : ERROR : Issues persisting captured application events : ${err.message}`)
+      console.error(
+        `InfluxDB : ERROR : Issues persisting captured application events : ${
+          err.message
+        }`
+      )
 
       return Promise.reject(err)
-    })
+    }
+  )
 }
 
 module.exports = ShadowedInflux
