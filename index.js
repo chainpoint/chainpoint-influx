@@ -8,15 +8,14 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
+ * limitations under the License. */
 const { InfluxDB } = require('influx')
 const request = require('request')
 // const rp = require('request-promise-native')
 const objectToLineProtocol = require('./lib/objectToLineProtocol')
 
 const INFLUXDB_DEFAULT_BATCH_SIZE = 1000
-const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
+const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = 10 * 1000 // 10secs
 
 /**
  * ShadowedInflux - A wrapper around the officially supported 'influx' package. This has been developed and re-packaged to address
@@ -34,8 +33,8 @@ const INFLUXDB_DEFAULT_FLUSHING_INTERVAL = (10 * 1000) // 10secs
 function ShadowedInflux (initOptions, config = {}) {
   InfluxDB.call(this, initOptions)
 
-  this.influxEnabled = (config.enabled === 'yes')
-  this.batching = (config.batching === 'yes')
+  this.influxEnabled = config.enabled === 'yes' || config.enabled === true
+  this.batching = config.batching === 'yes' || config.batching === true
   this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
@@ -90,7 +89,7 @@ ShadowedInflux.prototype.writePoints = function (points = [], opts = {}) {
 
   let events = (this.batching && (this.eventQueue.length >= this.eventQueueBatchSize)) ? this.eventQueue.splice(0, this.eventQueueBatchSize) : points
 
-  console.log('InfluxDB : PROCESSING : Writing points...')
+  console.log('InfluxDB : PROCESSING : Writing points...', JSON.stringify(events))
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
     (res) => {
