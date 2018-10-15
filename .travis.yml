@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+- '8'
+sudo: required
+before_deploy: yarn run test
+deploy:
+  provider: releases
+  api_key:
+    secure: wI21ZxoRgYRMODkOIVs1f2P99FwOnAGPEZJHxAwm9iL/6nidqowCV8rZxC+WJ4m5jCF4vra4Zk77r3VeOrUUOcoXfskocJBMpHWQsB+wHCk4xlS3xk2R9qudjPaXGZTSUh35PRfHAl7Uzv39eh/1mWEVWA7dkc3n1nWfrLp1/pxs55b73QMZERFciw4m9UNlzO94+8D7JygscRIlIbCvr9SsqFLQg9BqbL9MZyfQbBXeBW5+ZYo4JEFzaAQOjro7rmuT3rd+n1I6/nLZHohofOqZOlB8Z6922o/I3zH+v+b3l+PfhrJyzVKvOqZMILEf6OKUMbOKcuLvOAvvXuXCf98wrGJfY8saIkOsNshWXreE363JIuLpU3iIxdHhWm075tst11e4Npi+kZbgMtWYNuvrkSEBl9EgPB6W65SA0snU6q5doxOaopsT5235iBvhyJgsyCSCm3aUmM7J1t5vnzJVQJrkRjGSV9GKNyetOD5RL4N9SyY1XxtQ9c/cHRhdLHvYhGkSDtGgiKM2CVpn6x0b0WvgZlVvxDGgW1UFYkSZtbq0dvlgoiH24YY9Yxr5w31VHgcjTfhT3W09Bk8aJElZRYvq3JC2Wn3+4w610k9j425vNbEjwPEZcebvHA8rGSkuyFIss+Uz7RQTagWDWcpC/4DxaNL0uw7vJexiqAk=
+  file: ''
+  on:
+    tags: true
+branches:
+  except:
+  - gh-pages
+cache:
+  directories:
+  - node_modules
