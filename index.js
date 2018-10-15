@@ -96,10 +96,7 @@ ShadowedInflux.prototype.writePoints = function(points = [], opts = {}) {
       ? this.eventQueue.splice(0, this.eventQueueBatchSize)
       : points
 
-  console.log(
-    'InfluxDB : PROCESSING : Writing points...',
-    JSON.stringify(events)
-  )
+  console.log('InfluxDB : PROCESSING : Writing points...')
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
     res => {
