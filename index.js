@@ -8,12 +8,7 @@
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
-<<<<<<< HEAD
  * limitations under the License. */
-=======
- * limitations under the License.
- */
->>>>>>> 22c6bae6159f9f4002570c5cdcd8edbe2343454e
 const { InfluxDB } = require('influx')
 const request = require('request')
 // const rp = require('request-promise-native')
@@ -40,7 +35,8 @@ function ShadowedInflux(initOptions, config = {}) {
 
   this.influxEnabled = config.enabled === 'yes' || config.enabled === true
   this.batching = config.batching === 'yes' || config.batching === true
-  this.flushingInterval = config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
+  this.flushingInterval =
+    config.flushingInterval || INFLUXDB_DEFAULT_FLUSHING_INTERVAL
   this.eventQueue = []
   this.eventQueueBatchSize = config.batchSize || INFLUXDB_DEFAULT_BATCH_SIZE
 
@@ -100,7 +96,10 @@ ShadowedInflux.prototype.writePoints = function(points = [], opts = {}) {
       ? this.eventQueue.splice(0, this.eventQueueBatchSize)
       : points
 
-  console.log('InfluxDB : PROCESSING : Writing points...', JSON.stringify(events))
+  console.log(
+    'InfluxDB : PROCESSING : Writing points...',
+    JSON.stringify(events)
+  )
 
   return this.writePointsHttp(JSON.parse(JSON.stringify(events)), opts).then(
     res => {
